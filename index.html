@@ -51,11 +51,16 @@
             cursor: pointer;
             font-size: 14px;
             z-index: 10;
-            transition: background-color 0.3s;
+            transition: opacity 0.3s;
+            opacity: 0;
         }
 
         .fullscreen-btn:hover {
             background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .fullscreen-btn.visible {
+            opacity: 1;
         }
     </style>
 </head>
@@ -72,12 +77,29 @@
         const video = document.getElementById('menuVideo');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const videoContainer = document.querySelector('.video-container');
+        let hideTimeout;
+
+        // Mostrar botones al mover el mouse o usar control remoto
+        document.addEventListener('mousemove', showControls);
+        document.addEventListener('keydown', showControls);
 
         // Hacer clic en el video para entrar en pantalla completa
         video.addEventListener('click', toggleFullscreen);
 
         // Botón de pantalla completa
         fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        function showControls() {
+            fullscreenBtn.classList.add('visible');
+
+            // Limpiar el temporizador anterior
+            clearTimeout(hideTimeout);
+
+            // Ocultar botones después de 3 segundos de inactividad
+            hideTimeout = setTimeout(() => {
+                fullscreenBtn.classList.remove('visible');
+            }, 3000);
+        }
 
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
