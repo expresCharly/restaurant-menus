@@ -19,6 +19,16 @@
             justify-content: center;
             align-items: center;
             font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         video {
@@ -26,13 +36,83 @@
             height: 100%;
             object-fit: contain;
             display: block;
+            cursor: pointer;
+        }
+
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 10;
+            transition: background-color 0.3s;
+        }
+
+        .fullscreen-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
         }
     </style>
 </head>
 <body>
-    <video autoplay muted loop playsinline>
-        <source src="Menus-Video.mp4" type="video/mp4">
-        Tu navegador no soporta el elemento de video.
-    </video>
+    <div class="video-container">
+        <video id="menuVideo" autoplay muted loop playsinline>
+            <source src="Menus-Video.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
+        <button class="fullscreen-btn" id="fullscreenBtn">🖥️ Pantalla Completa</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('menuVideo');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const videoContainer = document.querySelector('.video-container');
+
+        // Hacer clic en el video para entrar en pantalla completa
+        video.addEventListener('click', toggleFullscreen);
+
+        // Botón de pantalla completa
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                // Entrar en pantalla completa
+                if (videoContainer.requestFullscreen) {
+                    videoContainer.requestFullscreen();
+                } else if (videoContainer.webkitRequestFullscreen) {
+                    videoContainer.webkitRequestFullscreen();
+                } else if (videoContainer.mozRequestFullScreen) {
+                    videoContainer.mozRequestFullScreen();
+                } else if (videoContainer.msRequestFullscreen) {
+                    videoContainer.msRequestFullscreen();
+                }
+            } else {
+                // Salir de pantalla completa
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // Cambiar el texto del botón cuando entra/sale de pantalla completa
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '⊞ Salir Pantalla Completa';
+            } else {
+                fullscreenBtn.textContent = '🖥️ Pantalla Completa';
+            }
+        });
+    </script>
 </body>
 </html>
