@@ -22,7 +22,7 @@
             overflow: hidden;
         }
 
-        .video-container {
+        .carousel-container {
             position: relative;
             width: 100%;
             height: 100%;
@@ -31,12 +31,31 @@
             align-items: center;
         }
 
-        video {
+        .carousel {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
             width: 100%;
             height: 100%;
+            padding: 40px;
+        }
+
+        .carousel-image {
+            max-width: 45%;
+            max-height: 90%;
             object-fit: contain;
             display: block;
             cursor: pointer;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .carousel-image.fade-out {
+            opacity: 0;
+        }
+
+        .carousel-image.fade-in {
+            opacity: 1;
         }
 
         .fullscreen-btn {
@@ -65,26 +84,43 @@
     </style>
 </head>
 <body>
-    <div class="video-container">
-        <video id="menuVideo" autoplay muted loop playsinline>
-            <source src="Menus-Video.mp4" type="video/mp4">
-            Tu navegador no soporta el elemento de video.
-        </video>
+    <div class="carousel-container">
+        <div class="carousel">
+            <img id="image1" class="carousel-image fade-in" src="imgs/Bowls.png" alt="Menú">
+            <img id="image2" class="carousel-image fade-in" src="imgs/Burritos.png" alt="Menú">
+        </div>
         <button class="fullscreen-btn" id="fullscreenBtn">🖥️ Pantalla Completa</button>
     </div>
 
     <script>
-        const video = document.getElementById('menuVideo');
+        const image1 = document.getElementById('image1');
+        const image2 = document.getElementById('image2');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
-        const videoContainer = document.querySelector('.video-container');
+        const carouselContainer = document.querySelector('.carousel-container');
         let hideTimeout;
+
+        // Array de todas las imágenes disponibles
+        const images = [
+            'imgs/Bowls.png',
+            'imgs/Burritos.png',
+            'imgs/Chamorro.png',
+            'imgs/Desayuno-continental.png',
+            'imgs/Kids.png',
+            'imgs/Lonche-de-res.png',
+            'imgs/Lonche-pollo.png',
+            'imgs/Lonche.png',
+            'imgs/Parrillada-4-personas.png',
+            'imgs/Parrillada-6-a-8-personas.png',
+            'imgs/Pizza-quesadilla.png',
+            'imgs/Sandwich.png'
+        ];
+
+        let currentIndex = 0;
+        const imageChangeInterval = 5000; // Cambiar cada 5 segundos
 
         // Mostrar botones al mover el mouse o usar control remoto
         document.addEventListener('mousemove', showControls);
         document.addEventListener('keydown', showControls);
-
-        // Hacer clic en el video para entrar en pantalla completa
-        video.addEventListener('click', toggleFullscreen);
 
         // Botón de pantalla completa
         fullscreenBtn.addEventListener('click', toggleFullscreen);
@@ -104,14 +140,14 @@
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 // Entrar en pantalla completa
-                if (videoContainer.requestFullscreen) {
-                    videoContainer.requestFullscreen();
-                } else if (videoContainer.webkitRequestFullscreen) {
-                    videoContainer.webkitRequestFullscreen();
-                } else if (videoContainer.mozRequestFullScreen) {
-                    videoContainer.mozRequestFullScreen();
-                } else if (videoContainer.msRequestFullscreen) {
-                    videoContainer.msRequestFullscreen();
+                if (carouselContainer.requestFullscreen) {
+                    carouselContainer.requestFullscreen();
+                } else if (carouselContainer.webkitRequestFullscreen) {
+                    carouselContainer.webkitRequestFullscreen();
+                } else if (carouselContainer.mozRequestFullScreen) {
+                    carouselContainer.mozRequestFullScreen();
+                } else if (carouselContainer.msRequestFullscreen) {
+                    carouselContainer.msRequestFullscreen();
                 }
             } else {
                 // Salir de pantalla completa
@@ -126,6 +162,40 @@
                 }
             }
         }
+
+        // Cambiar el texto del botón cuando entra/sale de pantalla completa
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '⊞ Salir Pantalla Completa';
+            } else {
+                fullscreenBtn.textContent = '🖥️ Pantalla Completa';
+            }
+        });
+
+        // Función para cambiar las imágenes
+        function changeImages() {
+            // Agregar efecto fade out
+            image1.classList.add('fade-out');
+            image2.classList.add('fade-out');
+
+            setTimeout(() => {
+                // Cambiar las imágenes
+                image1.src = images[currentIndex % images.length];
+                image2.src = images[(currentIndex + 1) % images.length];
+
+                // Remover fade out y agregar fade in
+                image1.classList.remove('fade-out');
+                image1.classList.add('fade-in');
+                image2.classList.remove('fade-out');
+                image2.classList.add('fade-in');
+
+                // Avanzar el índice en 2 (para mostrar 2 imágenes nuevas cada vez)
+                currentIndex += 2;
+            }, 250);
+        }
+
+        // Iniciar el carousel
+        setInterval(changeImages, imageChangeInterval);
 
         // Cambiar el texto del botón cuando entra/sale de pantalla completa
         document.addEventListener('fullscreenchange', () => {
