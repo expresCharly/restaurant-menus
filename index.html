@@ -81,7 +81,22 @@
         .fullscreen-btn.visible {
             opacity: 1;
         }
+
+        /* Cuando una sola imagen debe ocupar todo el ancho y alto */
+        .carousel-image.single {
+            max-width: 100% !important;
+            width: 100% !important;
+            max-height: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            z-index: 5;
+        }
+
+        .carousel-image.hidden {
+            display: none !important;
+        }
     </style>
+    </head>
     </head>
     <body>
         <div class="carousel-container">
@@ -175,6 +190,36 @@
             }
         });
 
+        // Ajusta la presentación para mostrar solo Bowls cuando aparezca
+        function updateLayoutForCurrentImages(imgA, imgB) {
+            const isA = imgA && imgA.toLowerCase().includes('bowls.png');
+            const isB = imgB && imgB.toLowerCase().includes('bowls.png');
+
+            // Reset styles
+            image1.classList.remove('single', 'hidden');
+            image2.classList.remove('single', 'hidden');
+            image1.style.display = 'block';
+            image2.style.display = 'block';
+            image1.style.maxWidth = '';
+            image2.style.maxWidth = '';
+
+            if (isA && !isB) {
+                // Mostrar solo image1
+                image1.classList.add('single');
+                image2.classList.add('hidden');
+            } else if (isB && !isA) {
+                // Mostrar solo image2
+                image2.classList.add('single');
+                image1.classList.add('hidden');
+            } else {
+                // Ninguna es Bowls o ambas lo son: mostrar ambas normalmente
+                image1.classList.remove('single', 'hidden');
+                image2.classList.remove('single', 'hidden');
+                image1.style.display = 'block';
+                image2.style.display = 'block';
+            }
+        }
+
         // Función para cambiar las imágenes
         function changeImages() {
             // Agregar efecto fade out
@@ -182,9 +227,15 @@
             image2.classList.add('fade-out');
 
             setTimeout(() => {
+                const imgA = images[currentIndex % images.length];
+                const imgB = images[(currentIndex + 1) % images.length];
+
                 // Cambiar las imágenes
-                image1.src = images[currentIndex % images.length];
-                image2.src = images[(currentIndex + 1) % images.length];
+                image1.src = imgA;
+                image2.src = imgB;
+
+                // Ajustar layout si alguno es Bowls
+                updateLayoutForCurrentImages(imgA, imgB);
 
                 // Remover fade out y agregar fade in
                 image1.classList.remove('fade-out');
@@ -197,17 +248,11 @@
             }, 250);
         }
 
+        // Ajuste inicial según las imágenes ya presentes
+        updateLayoutForCurrentImages(images[currentIndex % images.length], images[(currentIndex + 1) % images.length]);
+
         // Iniciar el carousel
         setInterval(changeImages, imageChangeInterval);
-
-        // Cambiar el texto del botón cuando entra/sale de pantalla completa
-        document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-                fullscreenBtn.textContent = '⊞ Salir Pantalla Completa';
-            } else {
-                fullscreenBtn.textContent = '🖥️ Pantalla Completa';
-            }
-        });
     </script>
     </body>
 </html>
