@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menús Expres</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Menús Expres</title>
+        <style>
         * {
             margin: 0;
             padding: 0;
@@ -33,17 +33,17 @@
 
         .carousel {
             display: flex;
-            gap: 20px;
+            gap: 5px;
             justify-content: center;
             align-items: center;
             width: 100%;
             height: 100%;
-            padding: 40px;
+            padding: 5px;
         }
 
         .carousel-image {
-            max-width: 45%;
-            max-height: 90%;
+            max-width: 49.5%;
+            max-height: 99%;
             object-fit: contain;
             display: block;
             cursor: pointer;
@@ -82,17 +82,20 @@
             opacity: 1;
         }
     </style>
-</head>
-<body>
-    <div class="carousel-container">
-        <div class="carousel">
-            <img id="image1" class="carousel-image fade-in" src="imgs/Bowls.png" alt="Menú">
-            <img id="image2" class="carousel-image fade-in" src="imgs/Burritos.png" alt="Menú">
+    </head>
+    <body>
+        <div class="carousel-container">
+            <div class="carousel">
+                <img id="image1" class="carousel-image fade-in"
+                    src="imgs/Bowls.png" alt="Menú">
+                <img id="image2" class="carousel-image fade-in"
+                    src="imgs/Burritos.png" alt="Menú">
+            </div>
+            <button class="fullscreen-btn" id="fullscreenBtn">🖥️ Pantalla
+                Completa</button>
         </div>
-        <button class="fullscreen-btn" id="fullscreenBtn">🖥️ Pantalla Completa</button>
-    </div>
 
-    <script>
+        <script>
         const image1 = document.getElementById('image1');
         const image2 = document.getElementById('image2');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
@@ -206,5 +209,5 @@
             }
         });
     </script>
-</body>
+    </body>
 </html>
