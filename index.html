@@ -82,6 +82,40 @@
             opacity: 1;
         }
 
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 10;
+            transition: opacity 0.3s, background-color 0.2s;
+            opacity: 0;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .nav-btn-left {
+            left: 20px;
+        }
+
+        .nav-btn-right {
+            right: 20px;
+        }
+
+        .nav-btn.visible {
+            opacity: 1;
+        }
+
         /* Cuando una sola imagen debe ocupar todo el ancho y alto */
         .carousel-image.single {
             max-width: 100% !important;
@@ -106,16 +140,20 @@
                 <img id="image2" class="carousel-image fade-in"
                     src="imgs/Burritos.png" alt="Menú">
             </div>
+            <button class="nav-btn nav-btn-left" id="prevBtn" aria-label="Anterior">❮</button>
+            <button class="nav-btn nav-btn-right" id="nextBtn" aria-label="Siguiente">❯</button>
             <button class="fullscreen-btn" id="fullscreenBtn">🖥️ Pantalla
                 Completa</button>
         </div>
-
         <script>
         const image1 = document.getElementById('image1');
         const image2 = document.getElementById('image2');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
         const carouselContainer = document.querySelector('.carousel-container');
         let hideTimeout;
+        let autoChangeTimer;
 
         // Array de todas las imágenes disponibles
         const images = [
@@ -124,13 +162,14 @@
             'imgs/Chamorro.png',
             'imgs/Desayuno-continental.png',
             'imgs/Kids.png',
-            'imgs/Lonche-de-res.png',
             'imgs/Lonche-pollo.png',
             'imgs/Lonche.png',
             'imgs/Parrillada-4-personas.png',
             'imgs/Parrillada-6-a-8-personas.png',
             'imgs/Pizza-quesadilla.png',
-            'imgs/Sandwich.png'
+            'imgs/Sandwich.png',
+            'imgs/Burguesa-Pollo-Empanizado.png',
+
         ];
 
         let currentIndex = 0;
@@ -139,12 +178,35 @@
         // Mostrar botones al mover el mouse o usar control remoto
         document.addEventListener('mousemove', showControls);
         document.addEventListener('keydown', showControls);
+        document.addEventListener('touchstart', showControls, { passive: true });
 
         // Botón de pantalla completa
         fullscreenBtn.addEventListener('click', toggleFullscreen);
+        prevBtn.addEventListener('click', () => {
+            showControls();
+            goToPreviousPair();
+            startAutoCarousel();
+        });
+        nextBtn.addEventListener('click', () => {
+            showControls();
+            goToNextPair();
+            startAutoCarousel();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                goToPreviousPair();
+                startAutoCarousel();
+            } else if (event.key === 'ArrowRight') {
+                goToNextPair();
+                startAutoCarousel();
+            }
+        });
 
         function showControls() {
             fullscreenBtn.classList.add('visible');
+            prevBtn.classList.add('visible');
+            nextBtn.classList.add('visible');
 
             // Limpiar el temporizador anterior
             clearTimeout(hideTimeout);
@@ -152,6 +214,8 @@
             // Ocultar botones después de 3 segundos de inactividad
             hideTimeout = setTimeout(() => {
                 fullscreenBtn.classList.remove('visible');
+                prevBtn.classList.remove('visible');
+                nextBtn.classList.remove('visible');
             }, 3000);
         }
 
@@ -242,17 +306,29 @@
                 image1.classList.add('fade-in');
                 image2.classList.remove('fade-out');
                 image2.classList.add('fade-in');
-
-                // Avanzar el índice en 2 (para mostrar 2 imágenes nuevas cada vez)
-                currentIndex += 2;
             }, 250);
+        }
+
+        function goToNextPair() {
+            currentIndex = (currentIndex + 2) % images.length;
+            changeImages();
+        }
+
+        function goToPreviousPair() {
+            currentIndex = (currentIndex - 2 + images.length) % images.length;
+            changeImages();
+        }
+
+        function startAutoCarousel() {
+            clearInterval(autoChangeTimer);
+            autoChangeTimer = setInterval(goToNextPair, imageChangeInterval);
         }
 
         // Ajuste inicial según las imágenes ya presentes
         updateLayoutForCurrentImages(images[currentIndex % images.length], images[(currentIndex + 1) % images.length]);
 
         // Iniciar el carousel
-        setInterval(changeImages, imageChangeInterval);
+        startAutoCarousel();
     </script>
     </body>
 </html>
