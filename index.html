@@ -33,7 +33,6 @@
 
         .carousel {
             display: flex;
-            gap: 5px;
             justify-content: center;
             align-items: center;
             width: 100%;
@@ -42,8 +41,10 @@
         }
 
         .carousel-image {
-            max-width: 49.5%;
-            max-height: 99%;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
             display: block;
             cursor: pointer;
@@ -116,28 +117,13 @@
             opacity: 1;
         }
 
-        /* Cuando una sola imagen debe ocupar todo el ancho y alto */
-        .carousel-image.single {
-            max-width: 100% !important;
-            width: 100% !important;
-            max-height: 100% !important;
-            height: 100% !important;
-            object-fit: contain !important;
-            z-index: 5;
-        }
-
-        .carousel-image.hidden {
-            display: none !important;
-        }
     </style>
     </head>
     <body>
         <div class="carousel-container">
             <div class="carousel">
                 <img id="image1" class="carousel-image fade-in"
-                    src="imgs/Bowls.png" alt="Menú" decoding="async" loading="eager">
-                <img id="image2" class="carousel-image fade-in"
-                    src="imgs/Burritos.png" alt="Menú" decoding="async" loading="eager">
+                    src="imgs/menu_1-2.png" alt="Menú" decoding="async" loading="eager">
             </div>
             <button class="nav-btn nav-btn-left" id="prevBtn" aria-label="Anterior">❮</button>
             <button class="nav-btn nav-btn-right" id="nextBtn" aria-label="Siguiente">❯</button>
@@ -146,7 +132,6 @@
         </div>
         <script>
         const image1 = document.getElementById('image1');
-        const image2 = document.getElementById('image2');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -167,7 +152,6 @@
             console.warn('Fallo al cargar imagen:', img.src);
             img.onerror = null; // evitar bucle
             img.src = placeholderDataUrl;
-            img.classList.remove('hidden');
             img.classList.add('fade-in');
         }
 
@@ -190,26 +174,24 @@
 
         // Array de todas las imágenes disponibles
         const images = [
-            'imgs/Bowls.png',
-            'imgs/Burritos.png',
-            'imgs/Chamorro.png',
-            'imgs/Desayuno-continental.png',
-            'imgs/Kids.png',
-            'imgs/Lonche-pollo.png',
-            'imgs/Lonche.png',
-            'imgs/Parrillada-4-personas.png',
-            'imgs/Parrillada-6-a-8-personas.png',
-            'imgs/Pizza-quesadilla.png',
-            'imgs/Sandwich.png',
-            'imgs/Burguesa-Pollo-Empanizado.png',
-            'imgs/Kids-2.png',
-
-            
-
+            'imgs/menu_1-2.png',
+            'imgs/menu_3-6.png',
+            'imgs/menu_7-10.png',
+            'imgs/menu_11.png',
+            'imgs/menu_12-13.png',
+            'imgs/menu_14.png',
+            'imgs/menu_15.png',
+            'imgs/menu_16.png',
+            'imgs/menu_17.png',
+            'imgs/menu_18.png',
+            'imgs/menu_19.png',
+            'imgs/menu_20.png',
+            'imgs/menu_21.png',
+            'imgs/menu_22.png',
         ];
 
         let currentIndex = 0;
-        const imageChangeInterval = 18000; // Cambiar cada 18 segundos
+        const imageChangeInterval = 15000; // Cambiar cada 15 segundos
 
         // Mostrar botones al mover el mouse o usar control remoto
         document.addEventListener('mousemove', showControls);
@@ -220,21 +202,21 @@
         fullscreenBtn.addEventListener('click', toggleFullscreen);
         prevBtn.addEventListener('click', () => {
             showControls();
-            goToPreviousPair();
+            goToPreviousImage();
             startAutoCarousel();
         });
         nextBtn.addEventListener('click', () => {
             showControls();
-            goToNextPair();
+            goToNextImage();
             startAutoCarousel();
         });
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowLeft') {
-                goToPreviousPair();
+                goToPreviousImage();
                 startAutoCarousel();
             } else if (event.key === 'ArrowRight') {
-                goToNextPair();
+                goToNextImage();
                 startAutoCarousel();
             }
         });
@@ -290,82 +272,40 @@
             }
         });
 
-        // Ajusta la presentación para mostrar solo Bowls cuando aparezca
-        function updateLayoutForCurrentImages(imgA, imgB) {
-            const isA = imgA && imgA.toLowerCase().includes('bowls.png');
-            const isB = imgB && imgB.toLowerCase().includes('bowls.png');
-
-            // Reset styles
-            image1.classList.remove('single', 'hidden');
-            image2.classList.remove('single', 'hidden');
-            image1.style.display = 'block';
-            image2.style.display = 'block';
-            image1.style.maxWidth = '';
-            image2.style.maxWidth = '';
-
-            if (isA && !isB) {
-                // Mostrar solo image1
-                image1.classList.add('single');
-                image2.classList.add('hidden');
-            } else if (isB && !isA) {
-                // Mostrar solo image2
-                image2.classList.add('single');
-                image1.classList.add('hidden');
-            } else {
-                // Ninguna es Bowls o ambas lo son: mostrar ambas normalmente
-                image1.classList.remove('single', 'hidden');
-                image2.classList.remove('single', 'hidden');
-                image1.style.display = 'block';
-                image2.style.display = 'block';
-            }
-        }
-
-        // Función para cambiar las imágenes
+        // Función para cambiar la imagen
         function changeImages() {
             // Agregar efecto fade out
             image1.classList.add('fade-out');
-            image2.classList.add('fade-out');
 
             setTimeout(() => {
                 const imgA = images[currentIndex % images.length];
-                const imgB = images[(currentIndex + 1) % images.length];
 
-                // Cambiar las imágenes
+                // Cambiar la imagen
                 image1.src = imgA;
-                image2.src = imgB;
-
-                // Ajustar layout si alguno es Bowls
-                updateLayoutForCurrentImages(imgA, imgB);
 
                 // Remover fade out y agregar fade in
                 image1.classList.remove('fade-out');
                 image1.classList.add('fade-in');
-                image2.classList.remove('fade-out');
-                image2.classList.add('fade-in');
             }, 250);
         }
 
-        function goToNextPair() {
-            currentIndex = (currentIndex + 2) % images.length;
+        function goToNextImage() {
+            currentIndex = (currentIndex + 1) % images.length;
             changeImages();
         }
 
-        function goToPreviousPair() {
-            currentIndex = (currentIndex - 2 + images.length) % images.length;
+        function goToPreviousImage() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
             changeImages();
         }
 
         function startAutoCarousel() {
             clearInterval(autoChangeTimer);
-            autoChangeTimer = setInterval(goToNextPair, imageChangeInterval);
+            autoChangeTimer = setInterval(goToNextImage, imageChangeInterval);
         }
-
-        // Ajuste inicial según las imágenes ya presentes
-        updateLayoutForCurrentImages(images[currentIndex % images.length], images[(currentIndex + 1) % images.length]);
 
         // Añadir manejadores de error a los elementos visibles
         image1.onerror = function() { handleImageError(image1); };
-        image2.onerror = function() { handleImageError(image2); };
 
         // Pre-cargar y luego iniciar el carousel
         preloadAllImages(images).then(() => {
